@@ -25,12 +25,12 @@ const resultElements = {
   hourly:  document.getElementById('result-hourly'),
 };
 
-const cardElements = {
-  annual:  document.getElementById('card-annual'),
-  monthly: document.getElementById('card-monthly'),
-  weekly:  document.getElementById('card-weekly'),
-  daily:   document.getElementById('card-daily'),
-  hourly:  document.getElementById('card-hourly'),
+const rowElements = {
+  annual:  document.getElementById('row-annual'),
+  monthly: document.getElementById('row-monthly'),
+  weekly:  document.getElementById('row-weekly'),
+  daily:   document.getElementById('row-daily'),
+  hourly:  document.getElementById('row-hourly'),
 };
 
 const assumptionDays  = document.getElementById('assumption-days');
@@ -75,12 +75,12 @@ function convert() {
   const daysPerWeek = parseFloat(daysPerWeekInput.value) || 5;
   const currency    = currencySelect.value;
 
-  assumptionDays.textContent  = `${daysPerWeek} working day${daysPerWeek !== 1 ? 's' : ''} per week`;
-  assumptionHours.textContent = `${hoursPerDay} working hour${hoursPerDay !== 1 ? 's' : ''} per day`;
+  assumptionDays.textContent  = `${daysPerWeek} days/wk`;
+  assumptionHours.textContent = `${hoursPerDay} hrs/day`;
 
   if (isNaN(raw) || raw < 0) {
     Object.values(resultElements).forEach(el => (el.textContent = '—'));
-    Object.values(cardElements).forEach(card => card.classList.remove('highlighted'));
+    Object.values(rowElements).forEach(row => row.classList.remove('result-row--highlighted'));
     return;
   }
 
@@ -99,20 +99,21 @@ function convert() {
   };
 
   Object.entries(results).forEach(([key, value]) => {
-    const el   = resultElements[key];
-    const card = cardElements[key];
+    const el  = resultElements[key];
+    const row = rowElements[key];
     el.textContent = formatCurrency(value, currency);
 
-    // Highlight the TO period card
+    // Highlight the TO period row
     if (key === toPeriod) {
-      card.classList.add('highlighted');
+      row.classList.add('result-row--highlighted');
     } else {
-      card.classList.remove('highlighted');
+      row.classList.remove('result-row--highlighted');
     }
 
-    card.classList.remove('animate');
-    void card.offsetWidth; // reflow to re-trigger animation
-    card.classList.add('animate');
+    // Animate the value element (fade)
+    el.classList.remove('animate');
+    void el.offsetWidth; // reflow to re-trigger animation
+    el.classList.add('animate');
   });
 }
 

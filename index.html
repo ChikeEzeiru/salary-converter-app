@@ -4,17 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Salary Converter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Salary Converter</h1>
-      <p class="subtitle">Convert your salary across any pay period</p>
-    </header>
+  <div class="app">
 
-    <main>
-      <section class="input-section">
+    <!-- LEFT PANEL — Inputs -->
+    <div class="panel panel-left">
+
+      <div class="panel-left__header">
+        <span class="app-title">Salary Converter</span>
+        <span class="app-subtitle">Professional salary calculator</span>
+      </div>
+
+      <div class="panel-left__body">
+
         <div class="input-group">
           <label for="currency-select">Currency</label>
           <select id="currency-select">
@@ -88,54 +95,76 @@
             <input type="number" id="days-per-week" value="5" min="1" max="7" step="1" />
           </div>
         </div>
-      </section>
 
-      <section class="results-section" id="results-section">
-        <h2>Converted Rates</h2>
-        <div class="results-grid">
-          <div class="result-card" id="card-annual">
-            <div class="result-label">Annual</div>
-            <div class="result-value" id="result-annual">—</div>
-            <div class="result-period">per year</div>
+      </div><!-- /.panel-left__body -->
+
+      <div class="panel-left__footer">
+        <p>Results are estimates. Consult a financial advisor for precise calculations.</p>
+      </div>
+
+    </div><!-- /.panel-left -->
+
+    <!-- RIGHT PANEL — Results -->
+    <div class="panel panel-right">
+
+      <div class="panel-right__header">
+        <span class="results-heading">All Rates</span>
+      </div>
+
+      <div class="results-list">
+
+        <div class="result-row" id="row-annual">
+          <div class="result-row__meta">
+            <span class="result-row__label">Annual</span>
+            <span class="result-row__sublabel">per year</span>
           </div>
-          <div class="result-card" id="card-monthly">
-            <div class="result-label">Monthly</div>
-            <div class="result-value" id="result-monthly">—</div>
-            <div class="result-period">per month</div>
-          </div>
-          <div class="result-card" id="card-weekly">
-            <div class="result-label">Weekly</div>
-            <div class="result-value" id="result-weekly">—</div>
-            <div class="result-period">per week</div>
-          </div>
-          <div class="result-card" id="card-daily">
-            <div class="result-label">Daily</div>
-            <div class="result-value" id="result-daily">—</div>
-            <div class="result-period">per day</div>
-          </div>
-          <div class="result-card" id="card-hourly">
-            <div class="result-label">Hourly</div>
-            <div class="result-value" id="result-hourly">—</div>
-            <div class="result-period">per hour</div>
-          </div>
+          <div class="result-row__value" id="result-annual">—</div>
         </div>
-      </section>
 
-      <section class="assumptions-section">
-        <h3>Calculation Assumptions</h3>
-        <ul id="assumptions-list">
-          <li>52 weeks per year</li>
-          <li>12 months per year</li>
-          <li id="assumption-days">5 working days per week</li>
-          <li id="assumption-hours">8 working hours per day</li>
-        </ul>
-      </section>
-    </main>
+        <div class="result-row" id="row-monthly">
+          <div class="result-row__meta">
+            <span class="result-row__label">Monthly</span>
+            <span class="result-row__sublabel">per month</span>
+          </div>
+          <div class="result-row__value" id="result-monthly">—</div>
+        </div>
 
-    <footer>
-      <p>Results are estimates based on the assumptions above. Consult a financial advisor for precise calculations.</p>
-    </footer>
-  </div>
+        <div class="result-row" id="row-weekly">
+          <div class="result-row__meta">
+            <span class="result-row__label">Weekly</span>
+            <span class="result-row__sublabel">per week</span>
+          </div>
+          <div class="result-row__value" id="result-weekly">—</div>
+        </div>
+
+        <div class="result-row" id="row-daily">
+          <div class="result-row__meta">
+            <span class="result-row__label">Daily</span>
+            <span class="result-row__sublabel">per day</span>
+          </div>
+          <div class="result-row__value" id="result-daily">—</div>
+        </div>
+
+        <div class="result-row" id="row-hourly">
+          <div class="result-row__meta">
+            <span class="result-row__label">Hourly</span>
+            <span class="result-row__sublabel">per hour</span>
+          </div>
+          <div class="result-row__value" id="result-hourly">—</div>
+        </div>
+
+      </div><!-- /.results-list -->
+
+      <div class="panel-right__assumptions">
+        <span class="assumption-pill">52 weeks/yr</span>
+        <span class="assumption-pill">12 months/yr</span>
+        <span class="assumption-pill" id="assumption-days">5 days/wk</span>
+        <span class="assumption-pill" id="assumption-hours">8 hrs/day</span>
+      </div>
+
+    </div><!-- /.panel-right -->
+
+  </div><!-- /.app -->
 
   <script src="script.js"></script>
 </body>
