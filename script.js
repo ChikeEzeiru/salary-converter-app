@@ -249,7 +249,11 @@ showEmptyState(); // start in empty state
 convert();
 
 // ─── Benchmark data ───────────────────────────────────────────────────────────
-const SALARY_DATA = {
+// The inline object below is the default / offline fallback.
+// On load, data/salary-benchmarks.json is fetched and overwrites it if successful.
+// To update figures: edit the JSON file and bump its "_meta.version". The inline
+// data here can be updated to match whenever convenient (it's only the fallback).
+let SALARY_DATA = {
   'United States': {
     'Software Engineer':           { junior: 85000,  mid: 115000, senior: 150000, staff: 200000 },
     'Frontend Engineer':           { junior: 78000,  mid: 105000, senior: 140000, staff: 185000 },
@@ -507,6 +511,35 @@ const SALARY_DATA = {
   },
 };
 
+// Fetch the JSON and overwrite the inline data if successful.
+// The inline data above stays active as an offline / file:// fallback.
+fetch('data/salary-benchmarks.json')
+  .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+  .then(({ _meta, ...countries }) => { SALARY_DATA = countries; })
+  .catch(err => console.warn('Salary benchmarks: using inline fallback.', err));
+
+// ─── Country → currency mapping ───────────────────────────────────────────────
+// Maps each benchmark country to the currency code used in its salary data.
+// Countries without a dedicated selector entry fall back to a close equivalent
+// (e.g. Sweden's data is in EUR-equivalent figures, SEK is not in the selector).
+const COUNTRY_CURRENCY = {
+  'United States': 'USD',
+  'United Kingdom': 'GBP',
+  'Canada':        'CAD',
+  'Australia':     'AUD',
+  'Germany':       'EUR',
+  'France':        'EUR',
+  'Netherlands':   'EUR',
+  'Sweden':        'EUR',  // SEK not in selector; figures are EUR-equivalent
+  'India':         'INR',
+  'Singapore':     'SGD',
+  'UAE':           'AED',
+  'Brazil':        'BRL',
+  'Nigeria':       'NGN',
+  'South Africa':  'ZAR',
+  'Japan':         'JPY',
+};
+
 // ─── Benchmark feature ────────────────────────────────────────────────────────
 
 const benchmarkSection      = document.getElementById('benchmark-section');
@@ -548,6 +581,9 @@ benchmarkApply.addEventListener('click', function () {
   isBenchmarkMode = true;
   setSalaryValue(salary);
   fromPeriodSelect.value = 'annual';
+  // Switch the currency selector to match the country's local currency
+  const countryCurrency = COUNTRY_CURRENCY[country];
+  if (countryCurrency) currencySelect.value = countryCurrency;
   updateCurrencySymbol();
   convert();
   showBenchmarkBadge();

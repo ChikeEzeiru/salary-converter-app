@@ -333,6 +333,7 @@ select {
 /* Right header — space-between for "All Rates" + mode pill */
 .panel-right__header {
   justify-content: space-between;
+  background: var(--surface);
 }
 
 .results-heading {
@@ -340,7 +341,7 @@ select {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--text-light);
+  color: var(--text-muted);
 }
 
 /* ─── Mode pill (benchmark / manual) ────────────────────── */
