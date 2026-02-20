@@ -587,6 +587,18 @@ benchmarkApply.addEventListener('click', function () {
   updateCurrencySymbol();
   convert();
   showBenchmarkBadge();
+
+  // On mobile (stacked layout), scroll the highlighted result row into view
+  if (window.innerWidth <= 768) {
+    const toPeriod      = toPeriodSelect.value;
+    const highlightedRow = rowElements[toPeriod];
+    if (highlightedRow) {
+      // Small delay so the DOM has painted the highlighted state first
+      setTimeout(() => {
+        highlightedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
+    }
+  }
 });
 
 benchmarkBadgeDismiss.addEventListener('click', function () {

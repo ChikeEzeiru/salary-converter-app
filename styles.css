@@ -591,7 +591,7 @@ select {
   animation: fadeIn 0.15s ease;
 }
 
-/* ─── Responsive — mobile stacked layout ─────────────────── */
+/* ─── Responsive — tablet (≤ 768px): stack panels vertically ─ */
 @media (max-width: 768px) {
   body {
     overflow: auto;
@@ -605,20 +605,39 @@ select {
     overflow: visible;
   }
 
+  /* Left panel fills full width, loses right border */
   .panel-left {
     width: 100%;
     flex-shrink: 1;
     height: auto;
+    overflow-y: visible;
     border-right: none;
     border-bottom: 1px solid var(--border);
   }
 
+  /* Right panel fills remaining space, scroll within it */
   .panel-right {
     flex: 1;
-    min-height: 50vh;
+    overflow-y: visible;
   }
 
-  /* Let footer grow on mobile since height is no longer fixed */
+  /* Relax the fixed header height so content wraps instead of clipping */
+  .panel-left__header,
+  .panel-right__header {
+    height: auto;
+    min-height: var(--header-h);
+    max-height: none;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  /* Mode pill: allow it to wrap below "All Rates" if space is tight */
+  .panel-right__header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Relax footer heights too */
   .panel-left__footer,
   .panel-right__assumptions {
     height: auto;
@@ -639,15 +658,16 @@ select {
   }
 }
 
+/* ─── Responsive — mobile (≤ 480px): tighten spacing ─────── */
 @media (max-width: 480px) {
-  .panel-left__body {
-    padding: 20px 16px;
-  }
-
   .panel-left__header,
   .panel-right__header {
     padding-left: 16px;
     padding-right: 16px;
+  }
+
+  .panel-left__body {
+    padding: 20px 16px;
   }
 
   .panel-left__footer,
@@ -656,9 +676,13 @@ select {
     padding-right: 16px;
   }
 
+  /* App brand: slightly smaller subtitle on very small screens */
+  .app-subtitle {
+    display: none;
+  }
+
   .result-row__inner {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding: 16px;
   }
 
   .result-row--highlighted {
@@ -666,28 +690,44 @@ select {
   }
 
   .result-row--highlighted .result-row__inner {
-    padding: 16px 16px;
+    padding: 16px;
   }
 
+  /* Value text slightly smaller so long amounts don't wrap */
+  .result-row__value {
+    font-size: 18px;
+  }
+
+  .result-row--highlighted .result-row__value {
+    font-size: 22px;
+  }
+
+  /* Hours/days row stays 2-col on mobile to save vertical space */
   .input-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
+  /* Period row: keep From + swap + To on one line, allow natural wrap only if needed */
   .period-row {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    gap: 6px;
   }
 
   .period-row .period-group {
-    flex: 1 1 calc(50% - 20px);
-    min-width: 120px;
+    flex: 1 1 0;
+    min-width: 0;
+    margin-bottom: 0;
   }
 
   .swap-wrapper {
-    order: 3;
-    width: 100%;
-    justify-content: center;
-    padding-bottom: 0;
+    flex-shrink: 0;
+    padding-bottom: 1px;
   }
+
+  /* Benchmark grid → single column */
+  .benchmark-toggle { padding-left: 16px; padding-right: 16px; }
+  .benchmark-body   { padding-left: 16px; padding-right: 16px; }
+  .benchmark-row    { grid-template-columns: 1fr; }
 }
 
 /* ─── Benchmark section ──────────────────────────────────── */
@@ -735,21 +775,24 @@ select {
 .benchmark-body {
   display: none;
   padding: 12px 28px 18px;
+  /* flex column so the row-to-row gap is controlled by a single value */
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .benchmark-section.is-open .benchmark-body {
-  display: block;
+  display: flex;
 }
 
 /* 2-column grid for benchmark inputs */
 .benchmark-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 0.75rem; /* column gap within a row — matches row-to-row gap */
 }
 
 .benchmark-row .input-group {
-  margin-bottom: 12px;
+  margin-bottom: 0; /* gap is handled by .benchmark-body's flex gap */
 }
 
 .benchmark-row--apply {
@@ -760,7 +803,7 @@ select {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 0; /* gap is handled by .benchmark-body's flex gap */
 }
 
 /* Invisible spacer label so Apply button baseline-aligns with select */
@@ -844,8 +887,3 @@ select {
   color: var(--text-muted);
 }
 
-@media (max-width: 480px) {
-  .benchmark-toggle { padding-left: 16px; padding-right: 16px; }
-  .benchmark-body   { padding-left: 16px; padding-right: 16px; }
-  .benchmark-row    { grid-template-columns: 1fr; }
-}
