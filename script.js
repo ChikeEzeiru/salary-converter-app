@@ -8,7 +8,8 @@ const CURRENCY_SYMBOLS = {
 const ZERO_DECIMAL_CURRENCIES = new Set(['JPY']);
 
 // DOM references
-const salaryInput      = document.getElementById('salary-amount');
+const salaryDisplay    = document.getElementById('salary-display');   // visible formatted input
+const salaryInput      = document.getElementById('salary-amount');    // hidden number input
 const currencySelect   = document.getElementById('currency-select');
 const currencySymbolEl = document.querySelector('.currency-symbol');
 const fromPeriodSelect = document.getElementById('from-period');
@@ -16,6 +17,8 @@ const toPeriodSelect   = document.getElementById('to-period');
 const swapBtn          = document.getElementById('swap-btn');
 const hoursPerDayInput = document.getElementById('hours-per-day');
 const daysPerWeekInput = document.getElementById('days-per-week');
+const resultsEmpty     = document.getElementById('results-empty');
+const resultsList      = document.getElementById('results-list');
 
 const resultElements = {
   annual:  document.getElementById('result-annual'),
@@ -36,6 +39,71 @@ const rowElements = {
 const assumptionDays  = document.getElementById('assumption-days');
 const assumptionHours = document.getElementById('assumption-hours');
 
+// ─── Salary input formatting ──────────────────────────────────────────────────
+// Formats a raw number into a comma-separated string (no currency symbol)
+// e.g. 1250000 → "1,250,000"  |  85000.5 → "85,000.50"
+function formatSalaryDisplay(value) {
+  if (value === '' || value === null || value === undefined) return '';
+  const num = parseFloat(value);
+  if (isNaN(num)) return '';
+  // Show up to 2 decimal places, but strip trailing zeros
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(num);
+}
+
+// Strip commas to get the raw number string for parsing
+function stripFormatting(str) {
+  return str.replace(/,/g, '').trim();
+}
+
+// Sync the hidden number input and reformat the display
+function syncSalaryFromDisplay() {
+  const raw = stripFormatting(salaryDisplay.value);
+  const num = parseFloat(raw);
+  salaryInput.value = isNaN(num) || raw === '' ? '' : num;
+}
+
+// Handle the display input:
+// - on 'input': sync to hidden field and trigger convert
+// - on 'blur':  reformat the value neatly (add commas)
+// - on 'focus': strip commas so the user can edit freely
+salaryDisplay.addEventListener('input', function () {
+  // Allow only digits, one dot, one leading minus (blocked by min=0 anyway)
+  // Remove anything that's not a digit or a dot
+  const cursor = this.selectionStart;
+  const before = this.value;
+  // allow digits and a single decimal point
+  this.value = before.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+  syncSalaryFromDisplay();
+  convert();
+  hideBenchmarkBadge();
+});
+
+salaryDisplay.addEventListener('blur', function () {
+  const raw = stripFormatting(this.value);
+  const num = parseFloat(raw);
+  if (!isNaN(num) && raw !== '') {
+    this.value = formatSalaryDisplay(num);
+  } else {
+    this.value = '';
+  }
+});
+
+salaryDisplay.addEventListener('focus', function () {
+  // Strip commas so user can edit the raw number
+  const raw = stripFormatting(this.value);
+  this.value = raw;
+});
+
+// Program-side setter: set both display and hidden input then reformat
+function setSalaryValue(num) {
+  salaryInput.value  = num;
+  salaryDisplay.value = formatSalaryDisplay(num);
+}
+
+// ─── Formatting ───────────────────────────────────────────────────────────────
 function formatCurrency(value, currencyCode) {
   if (!isFinite(value) || isNaN(value)) return '—';
   const isZeroDecimal = ZERO_DECIMAL_CURRENCIES.has(currencyCode);
@@ -51,6 +119,7 @@ function updateCurrencySymbol() {
   currencySymbolEl.textContent = CURRENCY_SYMBOLS[currencySelect.value] || currencySelect.value;
 }
 
+// ─── Conversion logic ─────────────────────────────────────────────────────────
 function toAnnual(amount, period, hoursPerDay, daysPerWeek) {
   const weeksPerYear  = 52;
   const monthsPerYear = 12;
@@ -67,6 +136,18 @@ function toAnnual(amount, period, hoursPerDay, daysPerWeek) {
   }
 }
 
+// ─── Empty-state toggle ───────────────────────────────────────────────────────
+function showEmptyState() {
+  resultsEmpty.classList.remove('is-hidden');
+  resultsList.classList.add('is-hidden');
+}
+
+function showResults() {
+  resultsEmpty.classList.add('is-hidden');
+  resultsList.classList.remove('is-hidden');
+}
+
+// ─── Main convert function ────────────────────────────────────────────────────
 function convert() {
   const raw         = parseFloat(salaryInput.value);
   const fromPeriod  = fromPeriodSelect.value;
@@ -78,11 +159,14 @@ function convert() {
   assumptionDays.textContent  = `${daysPerWeek} days/wk`;
   assumptionHours.textContent = `${hoursPerDay} hrs/day`;
 
-  if (isNaN(raw) || raw < 0) {
+  if (isNaN(raw) || raw < 0 || salaryInput.value === '') {
     Object.values(resultElements).forEach(el => (el.textContent = '—'));
     Object.values(rowElements).forEach(row => row.classList.remove('result-row--highlighted'));
+    showEmptyState();
     return;
   }
+
+  showResults();
 
   const annual = toAnnual(raw, fromPeriod, hoursPerDay, daysPerWeek);
   const weeksPerYear  = 52;
@@ -103,28 +187,25 @@ function convert() {
     const row = rowElements[key];
     el.textContent = formatCurrency(value, currency);
 
-    // Highlight the TO period row
     if (key === toPeriod) {
       row.classList.add('result-row--highlighted');
     } else {
       row.classList.remove('result-row--highlighted');
     }
 
-    // Animate the value element (fade)
     el.classList.remove('animate');
-    void el.offsetWidth; // reflow to re-trigger animation
+    void el.offsetWidth;
     el.classList.add('animate');
   });
 }
 
-// Event listeners
+// ─── Event listeners ──────────────────────────────────────────────────────────
 currencySelect.addEventListener('change', () => {
   updateCurrencySymbol();
   convert();
 });
 fromPeriodSelect.addEventListener('change', convert);
 toPeriodSelect.addEventListener('change', convert);
-salaryInput.addEventListener('input', convert);
 hoursPerDayInput.addEventListener('input', convert);
 daysPerWeekInput.addEventListener('input', convert);
 
@@ -135,8 +216,9 @@ swapBtn.addEventListener('click', () => {
   convert();
 });
 
-// Initialise on load
+// ─── Initialise on load ───────────────────────────────────────────────────────
 updateCurrencySymbol();
+showEmptyState(); // start in empty state
 convert();
 
 // ─── Benchmark data ───────────────────────────────────────────────────────────
@@ -436,13 +518,11 @@ benchmarkApply.addEventListener('click', function () {
   const salary = SALARY_DATA?.[country]?.[role]?.[level];
   if (salary === undefined) return;
 
-  salaryInput.value      = salary;
+  setSalaryValue(salary);
   fromPeriodSelect.value = 'annual';
   updateCurrencySymbol();
   convert();
   showBenchmarkBadge();
 });
 
-// Stacks on top of existing convert() listener — hides badge on manual edit
-salaryInput.addEventListener('input', hideBenchmarkBadge);
 benchmarkBadgeDismiss.addEventListener('click', hideBenchmarkBadge);
