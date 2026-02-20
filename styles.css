@@ -429,3 +429,124 @@ select {
     padding-bottom: 0;
   }
 }
+
+/* ─── Benchmark section ──────────────────────────────────── */
+.benchmark-section {
+  border-bottom: 1px solid var(--border);
+}
+
+.benchmark-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+  transition: background 0.15s;
+}
+
+.benchmark-toggle:hover {
+  background: var(--primary-light);
+}
+
+.benchmark-toggle__icon {
+  color: var(--text-light);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+  transform: rotate(0deg);
+}
+
+.benchmark-section.is-open .benchmark-toggle__icon {
+  transform: rotate(90deg);
+}
+
+.benchmark-toggle__label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.benchmark-body {
+  display: none;
+  padding: 16px 32px 20px;
+}
+
+.benchmark-section.is-open .benchmark-body {
+  display: block;
+}
+
+.benchmark-apply {
+  width: 100%;
+  padding: 10px 16px;
+  background: var(--primary);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.benchmark-apply:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.benchmark-apply:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ─── Benchmark badge ────────────────────────────────────── */
+.benchmark-badge {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.benchmark-badge.is-visible {
+  display: flex;
+}
+
+.benchmark-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-light);
+  flex-shrink: 0;
+}
+
+.benchmark-badge__text {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+.benchmark-badge__dismiss {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: 10px;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.benchmark-badge__dismiss:hover {
+  color: var(--text-muted);
+}
+
+@media (max-width: 420px) {
+  .benchmark-toggle { padding-left: 20px; padding-right: 20px; }
+  .benchmark-body   { padding-left: 20px; padding-right: 20px; }
+}

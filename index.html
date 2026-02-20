@@ -20,6 +20,84 @@
         <span class="app-subtitle">Professional salary calculator</span>
       </div>
 
+    <div class="benchmark-section" id="benchmark-section">
+
+      <button class="benchmark-toggle" id="benchmark-toggle" type="button"
+              aria-expanded="false" aria-controls="benchmark-body">
+        <svg class="benchmark-toggle__icon" xmlns="http://www.w3.org/2000/svg"
+             width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+             stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+        <span class="benchmark-toggle__label">Get a salary estimate</span>
+      </button>
+
+      <div class="benchmark-body" id="benchmark-body">
+
+        <div class="input-group">
+          <label for="benchmark-country">Country</label>
+          <select id="benchmark-country">
+            <option value="">— Select country —</option>
+            <option value="United States">United States</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="Canada">Canada</option>
+            <option value="Australia">Australia</option>
+            <option value="Germany">Germany</option>
+            <option value="France">France</option>
+            <option value="Netherlands">Netherlands</option>
+            <option value="Sweden">Sweden</option>
+            <option value="India">India</option>
+            <option value="Singapore">Singapore</option>
+            <option value="UAE">UAE</option>
+            <option value="Brazil">Brazil</option>
+            <option value="Nigeria">Nigeria</option>
+            <option value="South Africa">South Africa</option>
+            <option value="Japan">Japan</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="benchmark-role">Tech Role</label>
+          <select id="benchmark-role">
+            <option value="">— Select role —</option>
+            <option value="Software Engineer">Software Engineer</option>
+            <option value="Frontend Engineer">Frontend Engineer</option>
+            <option value="Backend Engineer">Backend Engineer</option>
+            <option value="Full Stack Engineer">Full Stack Engineer</option>
+            <option value="Data Scientist">Data Scientist</option>
+            <option value="Data Engineer">Data Engineer</option>
+            <option value="Product Manager">Product Manager</option>
+            <option value="UX Designer">UX Designer</option>
+            <option value="DevOps / SRE">DevOps / SRE</option>
+            <option value="Engineering Manager">Engineering Manager</option>
+            <option value="QA Engineer">QA Engineer</option>
+            <option value="Cybersecurity Engineer">Cybersecurity Engineer</option>
+            <option value="Customer Success Manager">Customer Success Manager</option>
+            <option value="Customer Experience Manager">Customer Experience Manager</option>
+            <option value="Customer Service Manager">Customer Service Manager</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="benchmark-level">Experience Level</label>
+          <select id="benchmark-level">
+            <option value="">— Select level —</option>
+            <option value="junior">Junior (0–2 yrs)</option>
+            <option value="mid">Mid-Level (3–5 yrs)</option>
+            <option value="senior">Senior (6–10 yrs)</option>
+            <option value="staff">Staff / Principal (10+ yrs)</option>
+          </select>
+        </div>
+
+        <button class="benchmark-apply" id="benchmark-apply" type="button" disabled>
+          Apply estimate
+        </button>
+
+      </div><!-- /.benchmark-body -->
+
+    </div><!-- /.benchmark-section -->
+
       <div class="panel-left__body">
 
         <div class="input-group">
@@ -54,6 +132,12 @@
               min="0"
               step="0.01"
             />
+          </div>
+          <div class="benchmark-badge" id="benchmark-badge">
+            <span class="benchmark-badge__dot" aria-hidden="true"></span>
+            <span class="benchmark-badge__text">Based on benchmark</span>
+            <button class="benchmark-badge__dismiss" id="benchmark-badge-dismiss"
+                    type="button" aria-label="Dismiss benchmark badge">&#x2715;</button>
           </div>
         </div>
 
