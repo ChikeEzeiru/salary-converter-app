@@ -11,7 +11,7 @@ const ZERO_DECIMAL_CURRENCIES = new Set(['JPY']);
 const salaryDisplay    = document.getElementById('salary-display');   // visible formatted input
 const salaryInput      = document.getElementById('salary-amount');    // hidden number input
 const currencySelect   = document.getElementById('currency-select');
-const currencySymbolEl = document.querySelector('.currency-symbol');
+const currencySymbolEl = document.getElementById('currency-chip');    // currency chip (replaces .currency-symbol)
 const fromPeriodSelect = document.getElementById('from-period');
 const toPeriodSelect   = document.getElementById('to-period');
 const swapBtn          = document.getElementById('swap-btn');
@@ -19,6 +19,32 @@ const hoursPerDayInput = document.getElementById('hours-per-day');
 const daysPerWeekInput = document.getElementById('days-per-week');
 const resultsEmpty     = document.getElementById('results-empty');
 const resultsList      = document.getElementById('results-list');
+
+// Mode pill DOM refs
+const modePill     = document.getElementById('mode-pill');
+const modePillDot  = document.getElementById('mode-pill-dot');
+const modePillText = document.getElementById('mode-pill-text');
+
+// Track whether the current value came from the benchmark
+let isBenchmarkMode = false;
+
+function setModePill(mode) {
+  // mode: 'benchmark' | 'manual' | 'hidden'
+  if (mode === 'hidden') {
+    modePill.classList.remove('is-visible', 'is-benchmark', 'is-manual');
+    return;
+  }
+  modePill.classList.add('is-visible');
+  if (mode === 'benchmark') {
+    modePill.classList.add('is-benchmark');
+    modePill.classList.remove('is-manual');
+    modePillText.textContent = 'benchmark rates';
+  } else {
+    modePill.classList.add('is-manual');
+    modePill.classList.remove('is-benchmark');
+    modePillText.textContent = 'manual rates';
+  }
+}
 
 const resultElements = {
   annual:  document.getElementById('result-annual'),
@@ -70,12 +96,11 @@ function syncSalaryFromDisplay() {
 // - on 'blur':  reformat the value neatly (add commas)
 // - on 'focus': strip commas so the user can edit freely
 salaryDisplay.addEventListener('input', function () {
-  // Allow only digits, one dot, one leading minus (blocked by min=0 anyway)
-  // Remove anything that's not a digit or a dot
-  const cursor = this.selectionStart;
+  // Allow only digits and a single decimal point
   const before = this.value;
-  // allow digits and a single decimal point
   this.value = before.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+  // Typing manually → switch to manual mode
+  isBenchmarkMode = false;
   syncSalaryFromDisplay();
   convert();
   hideBenchmarkBadge();
@@ -163,10 +188,12 @@ function convert() {
     Object.values(resultElements).forEach(el => (el.textContent = '—'));
     Object.values(rowElements).forEach(row => row.classList.remove('result-row--highlighted'));
     showEmptyState();
+    setModePill('hidden');
     return;
   }
 
   showResults();
+  setModePill(isBenchmarkMode ? 'benchmark' : 'manual');
 
   const annual = toAnnual(raw, fromPeriod, hoursPerDay, daysPerWeek);
   const weeksPerYear  = 52;
@@ -518,6 +545,7 @@ benchmarkApply.addEventListener('click', function () {
   const salary = SALARY_DATA?.[country]?.[role]?.[level];
   if (salary === undefined) return;
 
+  isBenchmarkMode = true;
   setSalaryValue(salary);
   fromPeriodSelect.value = 'annual';
   updateCurrencySymbol();
@@ -525,4 +553,9 @@ benchmarkApply.addEventListener('click', function () {
   showBenchmarkBadge();
 });
 
-benchmarkBadgeDismiss.addEventListener('click', hideBenchmarkBadge);
+benchmarkBadgeDismiss.addEventListener('click', function () {
+  hideBenchmarkBadge();
+  // Dismissing the badge signals the user considers this their own value
+  isBenchmarkMode = false;
+  setModePill(salaryInput.value !== '' ? 'manual' : 'hidden');
+});

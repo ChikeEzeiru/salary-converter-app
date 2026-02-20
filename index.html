@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Salary Converter</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -100,6 +102,7 @@
         </div>
       </div>
 
+      <!-- Benchmark section -->
       <div class="benchmark-section" id="benchmark-section">
 
         <button class="benchmark-toggle" id="benchmark-toggle" type="button"
@@ -115,7 +118,7 @@
 
         <div class="benchmark-body" id="benchmark-body">
 
-          <!-- Row 1: Country + Role side by side -->
+          <!-- Row 1: Country + Role -->
           <div class="benchmark-row">
             <div class="input-group">
               <label for="benchmark-country">Country</label>
@@ -161,7 +164,7 @@
             </div>
           </div>
 
-          <!-- Row 2: Level + Apply button side by side -->
+          <!-- Row 2: Level + Apply -->
           <div class="benchmark-row benchmark-row--apply">
             <div class="input-group">
               <label for="benchmark-level">Experience Level</label>
@@ -182,7 +185,6 @@
           </div>
 
         </div><!-- /.benchmark-body -->
-
       </div><!-- /.benchmark-section -->
 
       <div class="panel-left__body">
@@ -208,12 +210,13 @@
           </select>
         </div>
 
+        <!-- Salary Amount — chip + number field -->
         <div class="input-group">
           <label for="salary-display">Salary Amount</label>
-          <!-- Formatted display sits over a hidden real number input -->
-          <div class="input-wrapper">
-            <span class="currency-symbol">$</span>
-            <!-- Visible formatted text input (display only) -->
+          <div class="salary-input-row">
+            <!-- Currency chip (left zone) -->
+            <span class="currency-chip" id="currency-chip">$</span>
+            <!-- Number field (right zone) -->
             <input
               type="text"
               id="salary-display"
@@ -293,9 +296,14 @@
 
       <div class="panel-right__header">
         <span class="results-heading">All Rates</span>
+        <!-- Mode pill — shown after user interacts -->
+        <div class="mode-pill" id="mode-pill">
+          <span class="mode-pill__dot" id="mode-pill-dot"></span>
+          <span class="mode-pill__text" id="mode-pill-text">benchmark rates</span>
+        </div>
       </div>
 
-      <!-- Empty state — shown until user enters a value -->
+      <!-- Empty state -->
       <div class="results-empty" id="results-empty">
         <div class="results-empty__icon" aria-hidden="true">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
@@ -313,52 +321,66 @@
       <div class="results-list" id="results-list">
 
         <div class="result-row" id="row-annual">
-          <div class="result-row__meta">
-            <span class="result-row__label">Annual</span>
-            <span class="result-row__sublabel">per year</span>
+          <div class="result-row__inner">
+            <div class="result-row__meta">
+              <span class="result-row__label">Annual</span>
+              <span class="result-row__sublabel">per year</span>
+            </div>
+            <div class="result-row__value" id="result-annual">—</div>
           </div>
-          <div class="result-row__value" id="result-annual">—</div>
         </div>
 
         <div class="result-row" id="row-monthly">
-          <div class="result-row__meta">
-            <span class="result-row__label">Monthly</span>
-            <span class="result-row__sublabel">per month</span>
+          <div class="result-row__inner">
+            <div class="result-row__meta">
+              <span class="result-row__label">Monthly</span>
+              <span class="result-row__sublabel">per month</span>
+            </div>
+            <div class="result-row__value" id="result-monthly">—</div>
           </div>
-          <div class="result-row__value" id="result-monthly">—</div>
         </div>
 
         <div class="result-row" id="row-weekly">
-          <div class="result-row__meta">
-            <span class="result-row__label">Weekly</span>
-            <span class="result-row__sublabel">per week</span>
+          <div class="result-row__inner">
+            <div class="result-row__meta">
+              <span class="result-row__label">Weekly</span>
+              <span class="result-row__sublabel">per week</span>
+            </div>
+            <div class="result-row__value" id="result-weekly">—</div>
           </div>
-          <div class="result-row__value" id="result-weekly">—</div>
         </div>
 
         <div class="result-row" id="row-daily">
-          <div class="result-row__meta">
-            <span class="result-row__label">Daily</span>
-            <span class="result-row__sublabel">per day</span>
+          <div class="result-row__inner">
+            <div class="result-row__meta">
+              <span class="result-row__label">Daily</span>
+              <span class="result-row__sublabel">per day</span>
+            </div>
+            <div class="result-row__value" id="result-daily">—</div>
           </div>
-          <div class="result-row__value" id="result-daily">—</div>
         </div>
 
         <div class="result-row" id="row-hourly">
-          <div class="result-row__meta">
-            <span class="result-row__label">Hourly</span>
-            <span class="result-row__sublabel">per hour</span>
+          <div class="result-row__inner">
+            <div class="result-row__meta">
+              <span class="result-row__label">Hourly</span>
+              <span class="result-row__sublabel">per hour</span>
+            </div>
+            <div class="result-row__value" id="result-hourly">—</div>
           </div>
-          <div class="result-row__value" id="result-hourly">—</div>
         </div>
 
       </div><!-- /.results-list -->
 
+      <!-- Assumptions footer with explainer + pills -->
       <div class="panel-right__assumptions">
-        <span class="assumption-pill">52 weeks/yr</span>
-        <span class="assumption-pill">12 months/yr</span>
-        <span class="assumption-pill" id="assumption-days">5 days/wk</span>
-        <span class="assumption-pill" id="assumption-hours">8 hrs/day</span>
+        <p class="assumptions-label">Rates above are calculated using:</p>
+        <div class="assumptions-pills">
+          <span class="assumption-pill">52 weeks/yr</span>
+          <span class="assumption-pill">12 months/yr</span>
+          <span class="assumption-pill" id="assumption-days">5 days/wk</span>
+          <span class="assumption-pill" id="assumption-hours">8 hrs/day</span>
+        </div>
       </div>
 
     </div><!-- /.panel-right -->
